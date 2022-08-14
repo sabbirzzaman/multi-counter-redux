@@ -1,17 +1,18 @@
 // select elements
-const addNewCardBtn = document.getElementById('add-new-card');
 const counterCardsEl = document.getElementById('counter-cards');
+const addNewCardBtn = document.getElementById('add-new-card');
+const resetBtn = document.getElementById('reset');
 
 // action identifier
 const ADD_CARD = 'add-card';
 const INCREMENT = 'increment';
 const DECREMENT = 'decrement';
+const RESET = 'reset';
 
 // create action
-const newCard = (cardId) => {
+const newCard = () => {
     return {
         type: ADD_CARD,
-        payload: cardId,
     };
 };
 
@@ -30,6 +31,12 @@ const decrement = (id, value) => {
         payload: {
             id, value
         },
+    };
+};
+
+const resetCounters = () => {
+    return {
+        type: RESET,
     };
 };
 
@@ -72,6 +79,15 @@ function reducer(state = initialState, action) {
 
                 card.counter = newValue;
             }
+        })
+        
+        return updatedState;
+    } else if (action.type === RESET) {
+        const updatedState = [...state];
+        
+        updatedState.map((cards) => {
+            console.log(cards)
+                cards.counter = 0;
         })
         
         return updatedState;
@@ -134,11 +150,11 @@ cardRender();
 cardStore.subscribe(cardRender);
 
 // button handler
-addNewCardBtn.addEventListener('click', (e) => {
-    cardStore.dispatch(newCard(1));
+addNewCardBtn.addEventListener('click', () => {
+    cardStore.dispatch(newCard());
 });
 
-counterCardsEl.addEventListener('click', function (e) {
+counterCardsEl.addEventListener('click', (e) => {
     const card = e.target;
     const id = card.parentNode.id;
     const value = parseInt(id) + 2;
@@ -150,4 +166,8 @@ counterCardsEl.addEventListener('click', function (e) {
     if(card.classList[0] === 'decrement') {
         cardStore.dispatch(decrement(id, value))
     }
+})
+
+resetBtn.addEventListener('click', () => {
+    cardStore.dispatch(resetCounters())
 })
