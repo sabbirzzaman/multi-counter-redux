@@ -3,6 +3,7 @@ const counterCardsEl = document.getElementById('counter-cards');
 const addNewCardBtn = document.getElementById('add-new-card');
 const resetBtn = document.getElementById('reset');
 const removeBtn = document.getElementById('remove');
+const removeAllBtn = document.getElementById('remove-all');
 
 // action identifier
 const ADD_CARD = 'add-card';
@@ -10,6 +11,7 @@ const INCREMENT = 'increment';
 const DECREMENT = 'decrement';
 const RESET = 'reset';
 const REMOVE = 'remove';
+const REMOVE_ALL = 'remove-all';
 
 // create action
 const newCard = () => {
@@ -45,6 +47,12 @@ const resetCounters = () => {
 const removeCounters = () => {
     return {
         type: REMOVE,
+    }
+}
+
+const removeAllCounters = () => {
+    return {
+        type: REMOVE_ALL,
     }
 }
 
@@ -105,6 +113,11 @@ function reducer(state = initialState, action) {
         updatedState.pop()
         
         return updatedState;
+    } else if (action.type === REMOVE_ALL) {
+        const updatedState = [...state];
+        updatedState.length = 0;
+        
+        return updatedState;
     } else {
         return state;
     }
@@ -119,7 +132,7 @@ function cardRender() {
     // remove text content
     counterCardsEl.textContent = '';
 
-    state.forEach((card) => {
+    if(state.length === 0) {
         // create card element
         const cardItem = document.createElement('div');
 
@@ -138,24 +151,51 @@ function cardRender() {
             'mt-4'
         );
 
-        cardItem.innerHTML = `
-        <div class="text-2xl font-semibold">${card.counter}</div>
-            <div id="${card.id}" class="flex space-x-3">
-                <button
-                    class="increment bg-indigo-400 text-white px-3 py-2 rounded shadow"
-                >
-                    Increment
-                </button>
-                <button
-                    class="decrement bg-red-400 text-white px-3 py-2 rounded shadow"
-                >
-                    Decrement
-                </button>
-            </div>`;
+        cardItem.innerText = 'There is no card available'
 
         // append card to main container
         counterCardsEl.appendChild(cardItem); 
-    });
+    }
+
+    if(state.length > 0) {
+        state.forEach((card) => {
+            // create card element
+            const cardItem = document.createElement('div');
+    
+            // add class list
+            cardItem.classList.add(
+                'p-4',
+                'h-auto',
+                'flex',
+                'flex-col',
+                'items-center',
+                'justify-center',
+                'space-y-5',
+                'bg-white',
+                'rounded',
+                'shadow',
+                'mt-4'
+            );
+    
+            cardItem.innerHTML = `
+                <div class="text-2xl font-semibold">${card.counter}</div>
+                <div id="${card.id}" class="flex space-x-3">
+                    <button
+                        class="increment bg-indigo-400 text-white px-3 py-2 rounded shadow"
+                    >
+                        Increment
+                    </button>
+                    <button
+                        class="decrement bg-red-400 text-white px-3 py-2 rounded shadow"
+                    >
+                        Decrement
+                    </button>
+                </div>`;
+    
+            // append card to main container
+            counterCardsEl.appendChild(cardItem); 
+        });
+    }
 }
 
 // initially call render
@@ -188,4 +228,8 @@ resetBtn.addEventListener('click', () => {
 
 removeBtn.addEventListener('click', () => {
     cardStore.dispatch(removeCounters())
+})
+
+removeAllBtn.addEventListener('click', () => {
+    cardStore.dispatch(removeAllCounters())
 })
