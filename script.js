@@ -2,12 +2,14 @@
 const counterCardsEl = document.getElementById('counter-cards');
 const addNewCardBtn = document.getElementById('add-new-card');
 const resetBtn = document.getElementById('reset');
+const removeBtn = document.getElementById('remove');
 
 // action identifier
 const ADD_CARD = 'add-card';
 const INCREMENT = 'increment';
 const DECREMENT = 'decrement';
 const RESET = 'reset';
+const REMOVE = 'remove';
 
 // create action
 const newCard = () => {
@@ -39,6 +41,12 @@ const resetCounters = () => {
         type: RESET,
     };
 };
+
+const removeCounters = () => {
+    return {
+        type: REMOVE,
+    }
+}
 
 // initial state
 const initialState = [
@@ -89,6 +97,12 @@ function reducer(state = initialState, action) {
             console.log(cards)
                 cards.counter = 0;
         })
+        
+        return updatedState;
+    } else if (action.type === REMOVE) {
+        const updatedState = [...state];
+        
+        updatedState.pop()
         
         return updatedState;
     } else {
@@ -170,4 +184,8 @@ counterCardsEl.addEventListener('click', (e) => {
 
 resetBtn.addEventListener('click', () => {
     cardStore.dispatch(resetCounters())
+})
+
+removeBtn.addEventListener('click', () => {
+    cardStore.dispatch(removeCounters())
 })
